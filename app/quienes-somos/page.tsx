@@ -6,35 +6,38 @@ import { DarkCta } from "@/components/DarkCta";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Gallery } from "@/components/Gallery";
 import { JsonLd } from "@/components/JsonLd";
+import { ObraCrossLink } from "@/components/ObraCrossLink";
 import { buildMetadata, breadcrumbLd } from "@/lib/seo";
+import { getZonaNames } from "@/lib/zonas";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Quiénes Somos",
+  title: "Quiénes Somos: Carpintería con 20 Años de Experiencia",
   description:
-    "Somos carpinteros que construimos en madera a medida en [Zona]. Trato directo, materiales nobles y un proceso claro. Conocé cómo trabajamos.",
+    "Somos un taller de carpintería y ebanistería con un equipo de 20 años de experiencia en [Zona]. Trabajamos en madera y melamina, con una red de trades de confianza. Conocé cómo trabajamos.",
   path: "/quienes-somos",
 });
 
 const VALUES = [
   {
-    t: "Trato directo",
-    d: "Te atiende el equipo que va a hacer el trabajo, no un call center. Hablás con quien construye.",
+    t: "Equipo establecido",
+    d: "No somos una sola persona: tenemos un equipo armado y una red de contactos de oficio. El trabajo avanza parejo y no queda a medias.",
   },
   {
-    t: "Materiales nobles",
-    d: "Trabajamos madera tratada y herrajes de calidad. Te explicamos qué usamos y por qué, sin vueltas.",
+    t: "20 años de experiencia",
+    d: "Dos décadas haciendo cocinas, placares, puertas y muebles nos enseñaron a resolver bien y a aconsejar con honestidad qué conviene en cada caso.",
   },
   {
-    t: "Proceso claro",
-    d: "Medimos, te pasamos un presupuesto sin sorpresas y coordinamos plazos realistas antes de arrancar.",
+    t: "Madera y melamina",
+    d: "Trabajamos las dos: la madera por su nobleza y la melamina por su practicidad y precio. Te explicamos qué usar y por qué, sin vueltas.",
   },
   {
-    t: "A tu medida",
-    d: "No vendemos modelos cerrados: diseñamos cada trabajo para tu espacio, tu uso y tu presupuesto.",
+    t: "Presupuesto claro y a tiempo",
+    d: "Medimos, te pasamos un presupuesto sin sorpresas y coordinamos plazos realistas. Y cumplimos: el trabajo se entrega terminado en fecha.",
   },
 ];
 
 export default function QuienesSomosPage() {
+  const zonas = getZonaNames();
   const crumbs = [
     { name: "Inicio", path: "/" },
     { name: "Quiénes somos", path: "/quienes-somos" },
@@ -54,18 +57,28 @@ export default function QuienesSomosPage() {
             Quiénes somos
           </div>
           <h1 className="h1-hero" style={{ fontSize: 46 }}>
-            Carpinteros que construyen{" "}
-            <span className="accent">en madera.</span>
+            Un oficio de{" "}
+            <span className="accent">20 años,</span> con todo un equipo.
           </h1>
           <div className="prose" style={{ marginTop: 22, maxWidth: 680 }}>
             <p>
-              Somos un equipo de carpintería que construye en madera a medida en{" "}
-              [Zona] y alrededores: quinchos, casas, cocinas, aberturas, decks,
-              placares y más. Nos gusta el trabajo bien hecho, prolijo y pensado
-              para durar.
+              Somos un taller de <strong>carpintería y ebanistería a medida</strong>{" "}
+              con <strong>20 años de experiencia</strong> en [Zona]. En estos
+              años pasamos por cocinas, placares, puertas, mesadas, muebles de
+              melamina, aberturas y todo tipo de muebles empotrados — y eso es lo
+              que nos da el ojo para resolver bien y aconsejarte con honestidad.
             </p>
             <p>
-              Creemos en el trato directo y en la transparencia. Antes de
+              A diferencia de un taller de una sola persona, trabajamos con un{" "}
+              <strong>equipo establecido</strong> y una{" "}
+              <strong>red de contactos de oficio</strong> de confianza
+              (herrería, piedra, instalaciones). Eso significa que el trabajo
+              avanza parejo, no queda a medio terminar y se entrega en fecha. Acá
+              la gente compra tranquilidad, y eso es lo que ofrecemos.
+            </p>
+            <p>
+              Trabajamos en <strong>madera y melamina</strong>: la madera por su
+              nobleza y la melamina por lo práctica y económica que es. Antes de
               arrancar te explicamos qué materiales usamos, cómo es el proceso y
               qué plazos son realistas. No prometemos lo que no podemos cumplir.
             </p>
@@ -98,7 +111,27 @@ export default function QuienesSomosPage() {
           </div>
         </section>
 
-        <section className="shell" style={{ padding: "48px 22px 16px" }}>
+        <section className="shell" style={{ padding: "48px 22px 8px" }}>
+          <h2 className="section-title" style={{ marginBottom: 12 }}>
+            Dónde trabajamos
+          </h2>
+          <p
+            style={{
+              fontSize: 17,
+              color: "var(--muted)",
+              maxWidth: 680,
+              marginTop: 0,
+              marginBottom: 0,
+              lineHeight: 1.6,
+            }}
+          >
+            Nuestra base está en <strong>Guarambaré</strong> y atendemos toda la
+            zona: {zonas.join(", ")} y alrededores. Coordinamos la visita para
+            tomar medidas y la entrega sin complicarte.
+          </p>
+        </section>
+
+        <section className="shell" style={{ padding: "32px 22px 8px" }}>
           <h2 className="section-title" style={{ marginBottom: 12 }}>
             Nuestros trabajos
           </h2>
@@ -117,8 +150,12 @@ export default function QuienesSomosPage() {
           <Gallery tiles={6} />
         </section>
 
+        <section className="shell" style={{ padding: "32px 22px 8px" }}>
+          <ObraCrossLink />
+        </section>
+
         <div style={{ height: 32 }} />
-        <DarkCta context="Quiénes somos" />
+        <DarkCta context="Quiénes somos" accent="a medida." />
       </main>
       <Footer />
       <MobileWaBar context="Quiénes somos" />
