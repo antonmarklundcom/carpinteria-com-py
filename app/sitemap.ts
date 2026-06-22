@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
 import { getListedServiceMeta } from "@/lib/content";
+import { getZonaRouteSlugs } from "@/lib/zonas";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/$/, "");
@@ -24,5 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  return [...staticEntries, ...serviceEntries];
+  const zonaEntries: MetadataRoute.Sitemap = getZonaRouteSlugs().map((slug) => ({
+    url: `${base}/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...serviceEntries, ...zonaEntries];
 }

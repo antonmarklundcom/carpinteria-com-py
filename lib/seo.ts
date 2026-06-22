@@ -1,28 +1,24 @@
 import type { Metadata } from "next";
 import { siteConfig, withZone } from "./site";
+import { getZonaNames } from "./zonas";
 
-export const ZONES = [
-  "Asunción",
-  "Luque",
-  "Capiatá",
-  "San Lorenzo",
-  "Fernando de la Mora",
-  "Mariano Roque Alonso",
-  "Ñemby",
-  "Lambaré",
-];
+/** Built location-page names, used for schema areaServed. */
+function areaServedNames(): string[] {
+  const zonas = getZonaNames();
+  return zonas.length > 0 ? zonas : [siteConfig.zone];
+}
 
-/** Build per-page metadata with canonical + OpenGraph. */
+/** Build per-page metadata with canonical + OpenGraph. Title ends in "| Brand". */
 export function buildMetadata(opts: {
   title: string;
   description: string;
   path: string;
 }): Metadata {
-  const title = withZone(opts.title);
+  const title = `${withZone(opts.title)} | ${siteConfig.brand}`;
   const description = withZone(opts.description);
   const url = `${siteConfig.url.replace(/\/$/, "")}${opts.path}`;
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -47,7 +43,7 @@ export function organizationLd() {
     "@type": "Organization",
     name: siteConfig.brand,
     url: siteConfig.url,
-    areaServed: ZONES,
+    areaServed: areaServedNames(),
   };
 }
 
@@ -58,8 +54,8 @@ export function localBusinessLd() {
     name: siteConfig.brand,
     url: siteConfig.url,
     description:
-      "Carpintería a medida en madera: quinchos, casas, cocinas, aberturas, decks, placares y más. Presupuesto sin compromiso por WhatsApp.",
-    areaServed: ZONES.map((z) => ({ "@type": "City", name: z })),
+      "Carpintería y ebanistería a medida en madera y melamina: cocinas, placares, puertas, mesadas, muebles y aberturas. Equipo con 20 años de experiencia. Presupuesto sin compromiso por WhatsApp.",
+    areaServed: areaServedNames().map((z) => ({ "@type": "City", name: z })),
     address: {
       "@type": "PostalAddress",
       addressRegion: siteConfig.zone,
@@ -78,9 +74,9 @@ export function serviceLd(opts: {
     "@type": "Service",
     name: withZone(opts.name),
     description: withZone(opts.description),
-    serviceType: "Carpintería en madera",
+    serviceType: "Carpintería a medida en madera y melamina",
     provider: { "@type": "LocalBusiness", name: siteConfig.brand },
-    areaServed: ZONES.map((z) => ({ "@type": "City", name: z })),
+    areaServed: areaServedNames().map((z) => ({ "@type": "City", name: z })),
     url: `${siteConfig.url.replace(/\/$/, "")}${opts.path}`,
   };
 }

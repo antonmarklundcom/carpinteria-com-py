@@ -7,17 +7,21 @@ import { DarkCta } from "@/components/DarkCta";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
 import { withZone } from "@/lib/site";
-import { PILLARS, getServicesByPillar, type PillarKey } from "@/lib/content";
+import {
+  GROUPS,
+  GROUP_ORDER,
+  getServicesByGroup,
+  serviceNavLabel,
+} from "@/lib/content";
+import { ObraCrossLink } from "@/components/ObraCrossLink";
 import { buildMetadata, breadcrumbLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Servicios de Carpintería en Madera en [Zona]",
+  title: "Servicios de Carpintería a Medida en [Zona]",
   description:
-    "Todos nuestros servicios de carpintería en madera a medida en [Zona]: obra y estructuras, aberturas y carpintería a medida. Pedí tu presupuesto sin compromiso.",
+    "Carpintería y ebanistería a medida en [Zona]: cocinas, mesadas, placares, puertas, muebles de melamina, aberturas, machimbre y más. En madera y melamina, con un equipo de 20 años de experiencia.",
   path: "/servicios",
 });
-
-const PILLAR_ORDER: PillarKey[] = ["obra", "aberturas", "a-medida"];
 
 export default function ServiciosPage() {
   const crumbs = [
@@ -39,34 +43,36 @@ export default function ServiciosPage() {
             Servicios
           </div>
           <h1 className="h1-hero" style={{ fontSize: 44 }}>
-            Todo en madera, <span className="accent">a tu medida.</span>
+            Carpintería y ebanistería,{" "}
+            <span className="accent">a tu medida.</span>
           </h1>
           <p
             style={{
               fontSize: 19,
               color: "var(--ink-soft)",
               marginTop: 18,
-              maxWidth: 620,
+              maxWidth: 640,
               lineHeight: 1.5,
             }}
           >
-            Construimos en madera para tu casa y tu terreno. Elegí lo que
-            necesitás y pedí tu presupuesto sin compromiso por WhatsApp.
+            Trabajamos en madera y melamina, con un equipo de 20 años de
+            experiencia. Elegí lo que necesitás y pedí tu presupuesto sin
+            compromiso por WhatsApp.
           </p>
         </section>
 
-        {PILLAR_ORDER.map((pk) => {
-          const pillar = PILLARS[pk];
-          const services = getServicesByPillar(pk);
+        {GROUP_ORDER.map((gk) => {
+          const group = GROUPS[gk];
+          const services = getServicesByGroup(gk);
           if (services.length === 0) return null;
           return (
             <section
-              key={pk}
+              key={gk}
               className="shell"
               style={{ padding: "20px 22px 24px" }}
             >
               <h2 className="section-title" style={{ marginBottom: 20 }}>
-                {pillar.label}
+                {group.label}
               </h2>
               <div className="services-grid">
                 {services.map((s) => (
@@ -76,9 +82,7 @@ export default function ServiciosPage() {
                     className="service-card"
                   >
                     <div className="service-thumb" />
-                    <div className="card-title">
-                      {withZone(s.h1).replace(/\s+en .*/i, "")}
-                    </div>
+                    <div className="card-title">{serviceNavLabel(s)}</div>
                     <p
                       style={{
                         fontSize: 14,
@@ -96,6 +100,10 @@ export default function ServiciosPage() {
             </section>
           );
         })}
+
+        <section className="shell" style={{ padding: "24px 22px 8px" }}>
+          <ObraCrossLink />
+        </section>
 
         <div style={{ height: 32 }} />
         <DarkCta context="Servicios" />

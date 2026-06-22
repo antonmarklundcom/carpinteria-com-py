@@ -9,6 +9,9 @@ export const siteConfig = {
     "",
   ),
   zone: process.env.NEXT_PUBLIC_ZONE || "Gran Asunción",
+  // Sister site for heavy construction (house builds, pools, structural roofs,
+  // masonry, durlock, metal pergolas / portones de hierro).
+  obraUrl: process.env.NEXT_PUBLIC_OBRA_URL || "https://obra.com.py",
 };
 
 export const LEAD_PITCH =

@@ -22,11 +22,11 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.brand} — Carpintería a medida en madera`,
-    template: `%s · ${siteConfig.brand}`,
+    default: `${siteConfig.brand} — Carpintería a medida en madera y melamina`,
+    template: `%s | ${siteConfig.brand}`,
   },
   description:
-    "Quinchos, casas, cocinas, aberturas, decks y placares en madera, a tu medida. Presupuesto sin compromiso por WhatsApp.",
+    "Carpintería y ebanistería a medida en madera y melamina: cocinas, placares, puertas, mesadas y muebles. Equipo con 20 años de experiencia. Presupuesto sin compromiso por WhatsApp.",
 };
 
 export default function RootLayout({

@@ -1,9 +1,14 @@
 # carpinteria.com.py
 
-Sitio SEO + generación de leads para una carpintería paraguaya que construye
-en madera a medida (quinchos, casas, cocinas, aberturas, decks, placares y
-más). Todo el sitio empuja a un objetivo: **pedir un presupuesto gratis por
-WhatsApp**.
+Sitio SEO + generación de leads para una **carpintería y ebanistería a medida**
+paraguaya — un taller con un **equipo de 20 años de experiencia**, no un
+unipersonal. Trabaja en **madera y melamina**: cocinas, placares, puertas,
+mesadas, muebles de melamina, aberturas y más. Todo el sitio empuja a un
+objetivo: **pedir un presupuesto gratis por WhatsApp**.
+
+La construcción pesada (casas, piscinas, techos estructurales, mampostería,
+durlock, herrería) vive en el sitio hermano **obra.com.py**, con un bloque de
+cross-link reusable (`components/ObraCrossLink.tsx`).
 
 - **Mercado:** Paraguay. **Idioma:** español paraguayo (voseo).
 - **Modelo de conversión:** WhatsApp-first. Cada página termina en un CTA de
@@ -41,6 +46,7 @@ destino, pero el lead siempre llega a WhatsApp).
 | `NEXT_PUBLIC_BRAND_NAME` | ✅ | Nombre de la marca que aparece en header, footer y metadatos. |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | ✅ | Número en formato internacional, sin `+` ni espacios (ej. `595981123456`). |
 | `NEXT_PUBLIC_ZONE` | ✅ | Reemplaza el token `[Zona]` en H1s y copy (ej. `Gran Asunción`). |
+| `NEXT_PUBLIC_OBRA_URL` | ⬜ | URL del sitio hermano de obra para el cross-link (default `https://obra.com.py`). |
 | `GHL_WEBHOOK_URL` | ⬜ | Webhook de GoHighLevel para loguear leads. |
 | `SHEETS_WEBHOOK_URL` | ⬜ | Webhook de Google Sheets (ej. Apps Script) para loguear leads. |
 
@@ -83,22 +89,23 @@ relacionados, CTA, footer, barra sticky) lo renderiza la plantilla compartida
 
 ```yaml
 ---
-title: "Título para <title> y meta"            # string
-h1: "H1 visible (puede usar el token [Zona])"  # string
-slug: "mi-servicio"                            # debe coincidir con el nombre del archivo
-pillar: "obra"                                 # "obra" | "aberturas" | "a-medida"
-primaryKw: "palabra clave principal"           # string
-description: "Meta description en voseo"        # string
-h2s:                                            # se usan para SEO / referencia
+title: "Título para <title> (se le agrega ' | <Brand>')"  # string, sin la marca
+h1: "H1 visible (puede usar el token [Zona])"             # string
+slug: "mi-servicio"                                       # debe coincidir con el archivo
+group: "cocina"                                           # "cocina" | "a-medida" | "madera-exterior" | "servicios"
+primaryKw: "palabra clave principal"                      # string
+navLabel: "Etiqueta corta"                                # opcional; label en nav/cards (default: h1 recortado)
+description: "Meta description en voseo"                   # string
+h2s:                                                      # se usan para SEO / referencia
   - "Primera sección"
   - "Segunda sección"
-faq:                                            # incluí siempre una de "¿cuánto sale...?"
+faq:                                                      # incluí siempre una de "¿cuánto sale...?"
   - q: "¿Cuánto sale...?"
     a: "Respuesta que rutea a WhatsApp, nunca un precio inventado."
-related:                                         # slugs para el cluster de relacionados
+related:                                                   # slugs para el cluster de relacionados
   - "otro-servicio"
-order: 1                                         # orden en índices
-listed: true                                     # false = oculto de nav/índice/sitemap
+order: 1                                                   # orden dentro del grupo / índices
+listed: true                                               # false = oculto de nav/índice/sitemap
 ---
 
 Párrafo de intro (va antes del primer ##; se muestra en el hero).
@@ -115,20 +122,49 @@ intro del hero; cada `##` se convierte en una `<section>` con su copy y un CTA
 de WhatsApp al final.
 
 Para **ocultar** un servicio del nav, el índice y el sitemap (pero dejarlo
-accesible por URL), poné `listed: false` (ej. `/durlock-y-cielorrasos`).
+accesible por URL), poné `listed: false`.
+
+---
+
+## Páginas de zona (red local para "carpintería cerca de mí")
+
+Las location pages viven en `content/zonas/<slug>.mdx` y se renderizan en
+`/carpinteria-<slug>` mediante la plantilla `components/ZonaPage.tsx` (reusa el
+shell compartido). El slug no lleva acentos ni ñ (ej. `nemby`, `capiata`).
+
+```yaml
+---
+zona: "Ñemby"                 # nombre display (con acentos/ñ)
+slug: "nemby"                 # URL-safe; ruta = /carpinteria-nemby
+barrios:                      # barrios/landmarks reales (chips + copy)
+  - "Centro"
+  - "Cerro Ñemby"
+priority: 1                   # menor = más prioridad (Guarambaré = base = 0)
+intro: "Lead-in localizado y único (se usa como meta description)."
+---
+
+Cuerpo ÚNICO por zona (barrios reales, línea de confianza local, CTA). No
+clonar copy entre zonas — penaliza por contenido fino.
+```
+
+Agregar/quitar una zona es un archivo: nav, footer, sitemap, JSON-LD
+`areaServed` y el strip del home se actualizan solos.
 
 ---
 
 ## SEO
 
-- `metadata` por página desde el frontmatter (title, description, canonical,
-  OpenGraph).
-- JSON-LD: `Organization` + `LocalBusiness` en el home; `Service` + `FAQPage` +
-  `BreadcrumbList` en las páginas de servicio. Sin `aggregateRating`/reviews
+- `metadata` por página desde el frontmatter. El `<title>` siempre termina en
+  ` | <Brand>` (absoluto, vía `buildMetadata`).
+- JSON-LD: `Organization` + `LocalBusiness` en el home; `LocalBusiness` en las
+  páginas de zona; `Service` + `FAQPage` + `BreadcrumbList` en las de servicio.
+  `areaServed` se arma desde las zonas construidas. Sin `aggregateRating`/reviews
   inventados.
-- `app/sitemap.ts` y `app/robots.ts` se generan desde el contenido.
-- Linkeo interno automático desde `pillar` + `related`, con bloque visible de
-  "Servicios relacionados".
+- `app/sitemap.ts` y `app/robots.ts` se generan desde el contenido (servicios +
+  zonas).
+- Clusters de linkeo interno vía `related`: (a) cocina ↔ mesadas ↔ melamina ↔
+  placard; (b) puertas ↔ aberturas ↔ machimbre ↔ pérgolas.
+- Redirects 301 (renames + merges) en `next.config.mjs`.
 - Solo gradientes locales como placeholders — sin imágenes remotas.
 
 ---
@@ -155,31 +191,43 @@ privado.
 
 ```
 /                                Home
-/servicios                       Índice de servicios (por pilar)
+/servicios                       Índice de servicios (por grupo)
 /quienes-somos                   Nosotros
 /contacto                        Contacto + zonas
 
-# Pilar 1 — Obra y estructuras en madera
-/quinchos                        Quinchos a Medida            (FLAGSHIP)
-/galerias-y-porches              Galerías y Porches de Madera
-/casas-de-madera                 Casas y Cabañas de Madera
-/decks-y-pergolas                Decks y Pérgolas de Madera
-/techos-de-madera                Techos y Estructuras de Madera
-/escaleras-de-madera             Escaleras de Madera a Medida
-
-# Pilar 2 — Aberturas de madera
-/puertas-de-madera               Puertas de Madera a Medida   (FLAGSHIP)
-/portones-de-madera              Portones de Madera a Medida
-/ventanas-y-aberturas            Ventanas y Aberturas de Madera
-
-# Pilar 3 — Carpintería a medida / empotrados
-/muebles-de-cocina               Muebles de Cocina a Medida   (FLAGSHIP)
+# Servicios (12) — grupos de nav
+# Cocina
+/muebles-de-cocina               Muebles de Cocina a Medida
 /mesadas-de-cocina               Mesadas de Cocina a Medida
-/placares-y-vestidores           Placares y Vestidores a Medida
-/machimbre-y-revestimientos      Machimbre y Revestimientos de Madera
-/muebles-de-bano                 Muebles de Baño a Medida
+# A Medida
+/placares                        Placares y Vestidores a Medida
+/muebles-de-melamina             Muebles de Melamina a Medida
 /muebles-a-medida                Muebles a Medida y Empotrados
+/mobiliario-comercial            Mobiliario Comercial y Oficinas
+# Madera & Exterior
+/puertas-de-madera               Puertas de Madera a Medida
+/aberturas-de-madera             Ventanas, Portones y Aberturas de Madera
+/machimbre                       Machimbre y Revestimientos de Madera
+/pergolas-y-decks                Pérgolas y Decks de Madera
+# Servicios
+/instalacion-y-terminaciones     Instalación y Terminaciones
+/restauracion-y-mantenimiento    Restauración y Mantenimiento
 
-# Opcional (unlisted hasta confirmar cuadrilla de durlock)
-/durlock-y-cielorrasos           Durlock y Cielorrasos
+# Zonas (11) — red local /carpinteria-<slug>
+/carpinteria-guarambare          (base)   /carpinteria-nemby
+/carpinteria-villa-elisa                  /carpinteria-lambare
+/carpinteria-asuncion                     /carpinteria-fernando-de-la-mora
+/carpinteria-san-lorenzo                  /carpinteria-luque
+/carpinteria-capiata                      /carpinteria-mariano-roque-alonso
+/carpinteria-limpio
+
+# Redirects 301 (next.config.mjs)
+/placares-y-vestidores       → /placares
+/machimbre-y-revestimientos  → /machimbre
+/decks-y-pergolas            → /pergolas-y-decks
+/ventanas-y-aberturas        → /aberturas-de-madera   (merge)
+/portones-de-madera          → /aberturas-de-madera   (merge)
+/quinchos, /casas-de-madera, /galerias-y-porches      → /servicios
+/techos-de-madera, /durlock-y-cielorrasos             → /machimbre
+/escaleras-de-madera, /muebles-de-bano                → /muebles-a-medida
 ```

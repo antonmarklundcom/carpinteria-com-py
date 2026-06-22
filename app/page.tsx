@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -5,39 +6,49 @@ import { MobileWaBar } from "@/components/MobileWaBar";
 import { LeadForm } from "@/components/LeadForm";
 import { Gallery } from "@/components/Gallery";
 import { JsonLd } from "@/components/JsonLd";
-import { organizationLd, localBusinessLd } from "@/lib/seo";
+import { ObraCrossLink } from "@/components/ObraCrossLink";
+import { organizationLd, localBusinessLd, buildMetadata } from "@/lib/seo";
 import { WaLink } from "@/components/WaLink";
+import { withZone } from "@/lib/site";
+import { getAllZonas, zonaRouteSlug } from "@/lib/zonas";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Carpintería a Medida en [Zona]",
+  description:
+    "Carpintería y ebanistería a medida en [Zona], con un equipo de 20 años de experiencia. Cocinas, placares, puertas, mesadas y muebles en madera y melamina. Presupuesto sin compromiso por WhatsApp.",
+  path: "/",
+});
 
 const HOME_SERVICES = [
   {
-    title: "Quinchos",
-    slug: "quinchos",
-    desc: "Tu espacio para el asado, hecho para durar.",
+    title: "Placares y Vestidores",
+    slug: "placares",
+    desc: "Guardado prolijo, aprovechando cada rincón.",
   },
   {
-    title: "Casas en tu Terreno",
-    slug: "casas-de-madera",
-    desc: "Construimos tu casa de madera donde la quieras.",
+    title: "Puertas de Madera",
+    slug: "puertas-de-madera",
+    desc: "Principales e interiores, a medida del vano.",
   },
   {
-    title: "Cocinas a Medida",
+    title: "Mesadas de Cocina",
+    slug: "mesadas-de-cocina",
+    desc: "Granito, cuarzo o madera, con pileta integrada.",
+  },
+  {
+    title: "Muebles de Cocina",
     slug: "muebles-de-cocina",
     desc: "Diseñadas para tu espacio y tu día a día.",
   },
   {
-    title: "Aberturas de Madera",
-    slug: "ventanas-y-aberturas",
-    desc: "Puertas, ventanas y portones a medida.",
+    title: "Pérgolas y Decks",
+    slug: "pergolas-y-decks",
+    desc: "Sumá un espacio cálido al patio, en madera.",
   },
   {
-    title: "Decks y Pérgolas",
-    slug: "decks-y-pergolas",
-    desc: "Sumá un espacio cálido al patio.",
-  },
-  {
-    title: "Placares",
-    slug: "placares-y-vestidores",
-    desc: "Guardado prolijo, aprovechando cada rincón.",
+    title: "Muebles de Melamina",
+    slug: "muebles-de-melamina",
+    desc: "Muebles armados a medida, no venta de planchas.",
   },
 ];
 
@@ -47,7 +58,7 @@ const STEPS = [
     t: "Escribinos",
     d: "Mandanos la medida y una foto por WhatsApp.",
   },
-  { n: "02", t: "Visita", d: "Vamos a tu terreno a tomar las medidas." },
+  { n: "02", t: "Visita", d: "Vamos a tu casa a tomar las medidas." },
   {
     n: "03",
     t: "Presupuesto",
@@ -55,14 +66,14 @@ const STEPS = [
   },
   {
     n: "04",
-    t: "Construimos",
-    d: "Armamos tu proyecto y te lo entregamos.",
+    t: "Fabricamos",
+    d: "Armamos y montamos tu proyecto, a tiempo.",
   },
 ];
 
-const ZONE_LIST = "Asunción, Luque, Capiatá, San Lorenzo, Fernando de la Mora";
-
 export default function HomePage() {
+  const zonas = getAllZonas();
+
   return (
     <>
       <JsonLd data={organizationLd()} />
@@ -75,8 +86,8 @@ export default function HomePage() {
           <div className="hero-grid">
             <div className="hero-headline">
               <h1 className="h1-hero">
-                Construimos en madera,{" "}
-                <span className="accent">a tu medida.</span>
+                Carpintería <span className="accent">a Medida</span> en{" "}
+                {withZone("[Zona]")}
               </h1>
               <p
                 style={{
@@ -87,9 +98,10 @@ export default function HomePage() {
                   lineHeight: 1.5,
                 }}
               >
-                Quinchos, casas, cocinas, aberturas, decks y placares — en tu
-                terreno, hechos para durar. Pedí tu presupuesto y te
-                respondemos el mismo día.
+                Cocinas, placares, puertas y muebles a medida, en madera y
+                melamina. Somos un equipo con{" "}
+                <strong>20 años de experiencia</strong> — trabajo terminado a
+                tiempo y presupuesto claro.
               </p>
               <div
                 style={{
@@ -101,16 +113,16 @@ export default function HomePage() {
               />
               <div className="chips-row">
                 <div className="chip">
-                  <b>Presupuesto gratis</b>
-                  <span>Sin compromiso</span>
+                  <b>20 años de experiencia</b>
+                  <span>Oficio comprobado</span>
                 </div>
                 <div className="chip">
-                  <b>Trato directo</b>
-                  <span>Te atiende el equipo</span>
+                  <b>Equipo establecido</b>
+                  <span>No desaparecemos</span>
                 </div>
                 <div className="chip">
-                  <b>En tu terreno</b>
-                  <span>Donde lo necesites</span>
+                  <b>Presupuesto claro</b>
+                  <span>Sin sorpresas</span>
                 </div>
               </div>
             </div>
@@ -126,7 +138,7 @@ export default function HomePage() {
           <div className="section-head">
             <h2 className="section-title">Lo que construimos</h2>
             <span style={{ fontSize: 15, color: "var(--muted-2)" }}>
-              Todo en madera, a medida
+              En madera y melamina, a medida
             </span>
           </div>
           <div className="services-grid">
@@ -148,6 +160,11 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
+          <p style={{ marginTop: 22 }}>
+            <Link href="/servicios" className="footer-link" style={{ fontSize: 15 }}>
+              Ver todos los servicios →
+            </Link>
+          </p>
         </section>
 
         {/* CÓMO TRABAJAMOS */}
@@ -193,26 +210,40 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ZONAS + GALERÍA */}
-        <section className="shell" style={{ padding: "56px 22px 64px" }}>
-          <p
-            id="zonas"
-            style={{
-              fontSize: 22,
-              fontWeight: 700,
-              maxWidth: 880,
-              lineHeight: 1.4,
-              marginBottom: 40,
-              marginTop: 0,
-            }}
-          >
-            Trabajamos en <span className="accent">{ZONE_LIST}</span> y
-            alrededores.
-          </p>
+        {/* ZONAS — location network */}
+        <section className="shell" style={{ padding: "56px 22px 16px" }}>
+          <div className="section-head">
+            <h2 className="section-title" id="zonas">
+              Carpintería en tu zona
+            </h2>
+            <span style={{ fontSize: 15, color: "var(--muted-2)" }}>
+              Trabajamos en {withZone("[Zona]")} y alrededores
+            </span>
+          </div>
+          <div className="zona-grid">
+            {zonas.map((z) => (
+              <Link
+                key={z.slug}
+                href={`/${zonaRouteSlug(z.slug)}`}
+                className="zona-chip"
+              >
+                Carpintería en {z.zona}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* GALERÍA */}
+        <section className="shell" style={{ padding: "40px 22px 56px" }}>
           <h2 className="section-title" style={{ marginBottom: 24 }}>
             Galería de trabajos
           </h2>
           <Gallery tiles={6} />
+        </section>
+
+        {/* OBRA CROSS-LINK */}
+        <section className="shell" style={{ padding: "0 22px 56px" }}>
+          <ObraCrossLink />
         </section>
 
         {/* DARK CTA */}
@@ -232,7 +263,7 @@ export default function HomePage() {
             >
               Empezá tu proyecto{" "}
               <span className="accent" style={{ color: "var(--gold-bright)" }}>
-                en madera.
+                a medida.
               </span>
             </h2>
             <p
