@@ -282,6 +282,68 @@ body {
   gap: 28px;
 }
 
+/* ---- 2-column content + sticky sidebar (service & location pages) ---- */
+/* Mobile: single column, DOM order = head → aside (form) → body. */
+.content-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media (min-width: 1024px) {
+  .content-layout {
+    grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
+    grid-template-areas:
+      "head  aside"
+      "body  aside";
+    column-gap: 48px;
+    row-gap: 0;
+    align-items: start;
+  }
+  .cl-head {
+    grid-area: head;
+  }
+  .cl-body {
+    grid-area: body;
+  }
+  .cl-aside {
+    grid-area: aside;
+    position: sticky;
+    /* sticky header (72px) + ~24px breathing room */
+    top: 96px;
+    align-self: start;
+  }
+}
+
+/* Compact trust/info block under the sidebar form. */
+.sidebar-info {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  background: var(--tint);
+}
+.sidebar-info p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.sidebar-info p + p {
+  margin-top: 10px;
+}
+.sidebar-info .sidebar-trust {
+  font-weight: 700;
+  color: var(--ink);
+}
+.sidebar-info a {
+  color: var(--green);
+  font-weight: 700;
+  text-decoration: none;
+}
+.sidebar-info a:hover {
+  text-decoration: underline;
+}
+
 /* ---- Section head ---- */
 .section-head {
   display: flex;
@@ -446,6 +508,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
 }
 @media (min-width: 880px) {
   nav[data-desktop-nav] {

@@ -10,12 +10,6 @@ export function Header() {
   const serviceGroups = getServiceNavGroups();
   const zonas = getZonaNavLinks();
 
-  // Quick-access direct links in the top bar (per IA: Placares, Puertas).
-  const directLinks = [
-    { href: "/placares", label: "Placares" },
-    { href: "/puertas-de-madera", label: "Puertas" },
-  ];
-
   return (
     <header className="site-header">
       <div
@@ -91,17 +85,16 @@ export function Header() {
               </div>
             </div>
 
-            {directLinks.map((l) => (
-              <Link key={l.href} href={l.href} className="nav-link">
-                {l.label}
-              </Link>
-            ))}
-
             {/* Zonas ▾ dropdown */}
             <div className="has-dropdown">
-              <Link href="/contacto#zonas" className="nav-link nav-trigger">
+              <span
+                className="nav-link nav-trigger"
+                role="button"
+                tabIndex={0}
+                aria-haspopup="true"
+              >
                 Zonas <span aria-hidden="true">▾</span>
-              </Link>
+              </span>
               <div className="dropdown-panel dropdown-zonas">
                 {zonas.map((z) => (
                   <Link key={z.href} href={z.href} className="dropdown-link">
@@ -127,11 +120,7 @@ export function Header() {
             WhatsApp
           </Link>
 
-          <MobileNav
-            serviceGroups={serviceGroups}
-            zonas={zonas}
-            directLinks={directLinks}
-          />
+          <MobileNav serviceGroups={serviceGroups} zonas={zonas} />
         </div>
       </div>
     </header>

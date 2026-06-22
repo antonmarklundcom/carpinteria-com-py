@@ -3,13 +3,13 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileWaBar } from "./MobileWaBar";
 import { LeadForm } from "./LeadForm";
+import { SidebarInfo } from "./SidebarInfo";
 import { Gallery } from "./Gallery";
 import { Faq } from "./Faq";
 import { Breadcrumb } from "./Breadcrumb";
-import { WaLink } from "./WaLink";
 import { JsonLd } from "./JsonLd";
 import { DarkCta } from "./DarkCta";
-import { withZone } from "@/lib/site";
+import { siteConfig, withZone } from "@/lib/site";
 import {
   GROUPS,
   getServiceDoc,
@@ -62,10 +62,11 @@ export function ServicePage({ slug }: { slug: string }) {
           <Breadcrumb crumbs={crumbs} />
         </div>
 
-        {/* HERO */}
-        <section className="shell" style={{ padding: "16px 22px 48px" }}>
-          <div className="hero-grid">
-            <div className="hero-headline">
+        {/* 2-COLUMN BODY: main content (left) + sticky form/info (right) */}
+        <div className="shell" style={{ padding: "16px 22px 32px" }}>
+          <div className="content-layout">
+            {/* HEAD — eyebrow → H1 → intro */}
+            <div className="cl-head">
               <div className="eyebrow" style={{ marginBottom: 12 }}>
                 {group.label}
               </div>
@@ -73,67 +74,60 @@ export function ServicePage({ slug }: { slug: string }) {
               {introHtml && (
                 <div
                   className="prose"
-                  style={{ marginTop: 20, maxWidth: 540 }}
+                  style={{ marginTop: 20 }}
                   dangerouslySetInnerHTML={{ __html: introHtml }}
                 />
               )}
-              <div style={{ marginTop: 24 }}>
-                <WaLink context={h1} />
-              </div>
             </div>
-            <div className="hero-form">
+
+            {/* STICKY SIDEBAR — lead form + compact info block */}
+            <aside className="cl-aside">
               <LeadForm source={fm.slug} eyebrow="Presupuesto sin compromiso" />
+              <SidebarInfo zona={siteConfig.zone} context={h1} />
+            </aside>
+
+            {/* BODY — H2 sections (no buttons) → galería → FAQ */}
+            <div className="cl-body">
+              {sections.map((sec, i) => (
+                <section key={i} style={{ padding: "20px 0" }}>
+                  <h2
+                    className="section-title"
+                    style={{ fontSize: 28, marginBottom: 14 }}
+                  >
+                    {sec.heading}
+                  </h2>
+                  <div
+                    className="prose"
+                    dangerouslySetInnerHTML={{ __html: sec.html }}
+                  />
+                </section>
+              ))}
+
+              {/* GALERÍA */}
+              <section style={{ padding: "28px 0 16px" }}>
+                <h2 className="section-title" style={{ marginBottom: 24 }}>
+                  Galería de trabajos
+                </h2>
+                <Gallery tiles={4} />
+              </section>
+
+              {/* FAQ */}
+              <section style={{ padding: "16px 0 8px" }}>
+                <h2 className="section-title" style={{ marginBottom: 16 }}>
+                  Preguntas frecuentes
+                </h2>
+                <Faq
+                  items={fm.faq.map((f) => ({
+                    q: withZone(f.q),
+                    a: withZone(f.a),
+                  }))}
+                />
+              </section>
             </div>
           </div>
-        </section>
-
-        {/* BODY SECTIONS */}
-        <div className="shell" style={{ paddingBottom: 16 }}>
-          {sections.map((sec, i) => (
-            <section
-              key={i}
-              style={{ padding: "20px 0", maxWidth: 760 }}
-            >
-              <h2
-                className="section-title"
-                style={{ fontSize: 28, marginBottom: 14 }}
-              >
-                {sec.heading}
-              </h2>
-              <div
-                className="prose"
-                dangerouslySetInnerHTML={{ __html: sec.html }}
-              />
-              <div style={{ marginTop: 18 }}>
-                <WaLink
-                  label="Pedí presupuesto por WhatsApp"
-                  context={h1}
-                  className="btn-green"
-                />
-              </div>
-            </section>
-          ))}
         </div>
 
-        {/* GALERÍA */}
-        <section className="shell" style={{ padding: "40px 22px" }}>
-          <h2 className="section-title" style={{ marginBottom: 24 }}>
-            Galería de trabajos
-          </h2>
-          <Gallery tiles={4} />
-        </section>
-
-        {/* FAQ */}
-        <section className="shell" style={{ padding: "24px 22px 48px" }}>
-          <h2 className="section-title" style={{ marginBottom: 16 }}>
-            Preguntas frecuentes
-          </h2>
-          <div style={{ maxWidth: 760 }}>
-            <Faq items={fm.faq.map((f) => ({ q: withZone(f.q), a: withZone(f.a) }))} />
-          </div>
-        </section>
-
-        {/* SERVICIOS RELACIONADOS */}
+        {/* SERVICIOS RELACIONADOS — full width below the 2-col grid */}
         {related.length > 0 && (
           <section className="shell" style={{ padding: "16px 22px 56px" }}>
             <h2 className="section-title" style={{ marginBottom: 24 }}>

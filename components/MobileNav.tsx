@@ -12,11 +12,9 @@ import type { NavGroup, NavLink } from "@/lib/nav";
 export function MobileNav({
   serviceGroups,
   zonas,
-  directLinks,
 }: {
   serviceGroups: NavGroup[];
   zonas: NavLink[];
-  directLinks: NavLink[];
 }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -39,17 +37,6 @@ export function MobileNav({
 
       {open && (
         <div className="mobile-nav-panel" role="dialog" aria-label="Menú">
-          {directLinks.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="mobile-nav-link mobile-nav-top"
-              onClick={close}
-            >
-              {l.label}
-            </Link>
-          ))}
-
           {serviceGroups.map((g) => (
             <div key={g.label} className="mobile-nav-section">
               <div className="mobile-nav-heading">{g.label}</div>

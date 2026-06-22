@@ -3,8 +3,8 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileWaBar } from "./MobileWaBar";
 import { LeadForm } from "./LeadForm";
+import { SidebarInfo } from "./SidebarInfo";
 import { Breadcrumb } from "./Breadcrumb";
-import { WaLink } from "./WaLink";
 import { JsonLd } from "./JsonLd";
 import { DarkCta } from "./DarkCta";
 import { getZonaDoc, getAllZonas, zonaRouteSlug } from "@/lib/zonas";
@@ -41,10 +41,11 @@ export function ZonaPage({ routeSlug }: { routeSlug: string }) {
           <Breadcrumb crumbs={crumbs} />
         </div>
 
-        {/* HERO */}
-        <section className="shell" style={{ padding: "16px 22px 48px" }}>
-          <div className="hero-grid">
-            <div className="hero-headline">
+        {/* 2-COLUMN BODY: local content (left) + sticky form/info (right) */}
+        <div className="shell" style={{ padding: "16px 22px 32px" }}>
+          <div className="content-layout">
+            {/* HEAD — eyebrow → H1 → intro → barrios chips */}
+            <div className="cl-head">
               <div className="eyebrow" style={{ marginBottom: 12 }}>
                 Carpintería en {fm.zona}
               </div>
@@ -56,7 +57,6 @@ export function ZonaPage({ routeSlug }: { routeSlug: string }) {
                   fontSize: 19,
                   color: "var(--ink-soft)",
                   marginTop: 20,
-                  maxWidth: 540,
                   lineHeight: 1.5,
                 }}
               >
@@ -69,41 +69,45 @@ export function ZonaPage({ routeSlug }: { routeSlug: string }) {
                   </div>
                 ))}
               </div>
-              <div style={{ marginTop: 24 }}>
-                <WaLink context={context} />
-              </div>
             </div>
-            <div className="hero-form">
+
+            {/* STICKY SIDEBAR — lead form + compact info block */}
+            <aside className="cl-aside">
               <LeadForm source={routeSlug} eyebrow="Presupuesto sin compromiso" />
+              <SidebarInfo zona={fm.zona} context={context} />
+            </aside>
+
+            {/* BODY — unique local copy → service list */}
+            <div className="cl-body">
+              <section style={{ padding: "20px 0 8px" }}>
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                />
+              </section>
+
+              <section style={{ padding: "16px 0 8px" }}>
+                <h2 className="section-title" style={{ marginBottom: 20 }}>
+                  Lo que hacemos en {fm.zona}
+                </h2>
+                <div className="services-grid">
+                  {services.map((s) => (
+                    <Link
+                      key={s.slug}
+                      href={`/${s.slug}`}
+                      className="service-card"
+                    >
+                      <div className="service-thumb" />
+                      <div className="card-title">{serviceNavLabel(s)}</div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* UNIQUE LOCAL BODY */}
-        <section className="shell" style={{ padding: "0 22px 24px" }}>
-          <div
-            className="prose"
-            style={{ maxWidth: 760 }}
-            dangerouslySetInnerHTML={{ __html: bodyHtml }}
-          />
-        </section>
-
-        {/* SERVICE LIST */}
-        <section className="shell" style={{ padding: "24px 22px 16px" }}>
-          <h2 className="section-title" style={{ marginBottom: 20 }}>
-            Lo que hacemos en {fm.zona}
-          </h2>
-          <div className="services-grid">
-            {services.map((s) => (
-              <Link key={s.slug} href={`/${s.slug}`} className="service-card">
-                <div className="service-thumb" />
-                <div className="card-title">{serviceNavLabel(s)}</div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* OTHER ZONAS */}
+        {/* OTHER ZONAS — full width below the 2-col grid */}
         {otherZonas.length > 0 && (
           <section className="shell" style={{ padding: "24px 22px 8px" }}>
             <h2 className="section-title" style={{ marginBottom: 16 }}>
