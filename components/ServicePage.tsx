@@ -11,9 +11,10 @@ import { JsonLd } from "./JsonLd";
 import { DarkCta } from "./DarkCta";
 import { withZone } from "@/lib/site";
 import {
-  PILLARS,
+  GROUPS,
   getServiceDoc,
   getServiceMeta,
+  serviceNavLabel,
   type ServiceFrontmatter,
 } from "@/lib/content";
 import {
@@ -26,7 +27,7 @@ export function ServicePage({ slug }: { slug: string }) {
   const doc = getServiceDoc(slug);
   if (!doc) return null;
   const { frontmatter: fm, introHtml, sections } = doc;
-  const pillar = PILLARS[fm.pillar];
+  const group = GROUPS[fm.group];
   const h1 = withZone(fm.h1);
   const path = `/${fm.slug}`;
 
@@ -37,7 +38,7 @@ export function ServicePage({ slug }: { slug: string }) {
 
   const crumbs = [
     { name: "Inicio", path: "/" },
-    { name: pillar.short, path: "/servicios" },
+    { name: group.short, path: "/servicios" },
     { name: h1, path },
   ];
 
@@ -66,7 +67,7 @@ export function ServicePage({ slug }: { slug: string }) {
           <div className="hero-grid">
             <div className="hero-headline">
               <div className="eyebrow" style={{ marginBottom: 12 }}>
-                {pillar.label}
+                {group.label}
               </div>
               <h1 className="h1-hero">{h1}</h1>
               {introHtml && (
@@ -146,9 +147,7 @@ export function ServicePage({ slug }: { slug: string }) {
                   className="service-card"
                 >
                   <div className="service-thumb" />
-                  <div className="card-title">
-                    {withZone(r.h1).replace(/\s+en .*/i, "")}
-                  </div>
+                  <div className="card-title">{serviceNavLabel(r)}</div>
                   <p
                     style={{
                       fontSize: 14,

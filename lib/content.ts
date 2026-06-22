@@ -7,25 +7,39 @@ import matter from "gray-matter";
 import { marked } from "marked";
 import { z } from "zod";
 
-export const PILLARS = {
-  obra: {
-    key: "obra",
-    label: "Obra y estructuras en madera",
-    short: "Obra en madera",
-  },
-  aberturas: {
-    key: "aberturas",
-    label: "Aberturas de madera",
-    short: "Aberturas",
+// Service groups — drive the grouped "Servicios ▾" nav dropdown, the /servicios
+// index and the breadcrumb eyebrow. Order here = display order.
+export const GROUPS = {
+  cocina: {
+    key: "cocina",
+    label: "Cocina",
+    short: "Cocina",
   },
   "a-medida": {
     key: "a-medida",
-    label: "Carpintería a medida",
-    short: "A medida",
+    label: "A Medida",
+    short: "A Medida",
+  },
+  "madera-exterior": {
+    key: "madera-exterior",
+    label: "Madera & Exterior",
+    short: "Madera & Exterior",
+  },
+  servicios: {
+    key: "servicios",
+    label: "Servicios",
+    short: "Servicios",
   },
 } as const;
 
-export type PillarKey = keyof typeof PILLARS;
+export type GroupKey = keyof typeof GROUPS;
+
+export const GROUP_ORDER: GroupKey[] = [
+  "cocina",
+  "a-medida",
+  "madera-exterior",
+  "servicios",
+];
 
 const faqSchema = z.object({
   q: z.string().min(1),
@@ -36,9 +50,11 @@ export const frontmatterSchema = z.object({
   title: z.string().min(1),
   h1: z.string().min(1),
   slug: z.string().min(1),
-  pillar: z.enum(["obra", "aberturas", "a-medida"]),
+  group: z.enum(["cocina", "a-medida", "madera-exterior", "servicios"]),
   primaryKw: z.string().min(1),
   description: z.string().min(1),
+  /** Short label used in nav dropdowns + cards. Falls back to a trimmed h1. */
+  navLabel: z.string().optional(),
   h2s: z.array(z.string().min(1)).min(1),
   faq: z.array(faqSchema).min(1),
   related: z.array(z.string().min(1)).default([]),
@@ -107,8 +123,14 @@ export function getListedServiceMeta(): ServiceFrontmatter[] {
   return getAllServiceMeta().filter((m) => m.listed);
 }
 
-export function getServicesByPillar(pillar: PillarKey): ServiceFrontmatter[] {
-  return getListedServiceMeta().filter((m) => m.pillar === pillar);
+export function getServicesByGroup(group: GroupKey): ServiceFrontmatter[] {
+  return getListedServiceMeta().filter((m) => m.group === group);
+}
+
+/** Short nav/card label for a service: explicit navLabel or a trimmed h1. */
+export function serviceNavLabel(m: ServiceFrontmatter): string {
+  if (m.navLabel) return m.navLabel;
+  return m.h1.replace(/\s+(a Medida|en \[Zona\]).*$/i, "").trim();
 }
 
 marked.setOptions({ gfm: true, breaks: false });

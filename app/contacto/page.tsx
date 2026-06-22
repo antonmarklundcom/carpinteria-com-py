@@ -7,7 +7,8 @@ import { WaLink } from "@/components/WaLink";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
 import { LEAD_PITCH } from "@/lib/site";
-import { buildMetadata, breadcrumbLd, ZONES } from "@/lib/seo";
+import { buildMetadata, breadcrumbLd } from "@/lib/seo";
+import { getZonaNames } from "@/lib/zonas";
 
 export const metadata: Metadata = buildMetadata({
   title: "Contacto · Pedí tu Presupuesto en [Zona]",
@@ -17,6 +18,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function ContactoPage() {
+  const zonas = getZonaNames();
   const crumbs = [
     { name: "Inicio", path: "/" },
     { name: "Contacto", path: "/contacto" },
@@ -79,7 +81,7 @@ export default function ContactoPage() {
                   }}
                 >
                   Trabajamos en{" "}
-                  <span className="accent">{ZONES.join(", ")}</span> y
+                  <span className="accent">{zonas.join(", ")}</span> y
                   alrededores.
                 </p>
               </div>
