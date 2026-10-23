@@ -14,20 +14,21 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const zona = getZonaByRouteSlug(params.slug);
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const zona = getZonaByRouteSlug(slug);
   if (zona) {
     return buildMetadata({
       title: `Carpintería a Medida en ${zona.zona}`,
       description: zona.intro,
-      path: `/${params.slug}`,
+      path: `/${slug}`,
     });
   }
-  const meta = getServiceMeta(params.slug);
+  const meta = getServiceMeta(slug);
   if (!meta) return {};
   return buildMetadata({
     title: meta.title,
@@ -36,11 +37,12 @@ export function generateMetadata({
   });
 }
 
-export default function Page({ params }: { params: { slug: string } }) {
-  if (getZonaByRouteSlug(params.slug)) {
-    return <ZonaPage routeSlug={params.slug} />;
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  if (getZonaByRouteSlug(slug)) {
+    return <ZonaPage routeSlug={slug} />;
   }
-  const meta = getServiceMeta(params.slug);
+  const meta = getServiceMeta(slug);
   if (!meta) notFound();
-  return <ServicePage slug={params.slug} />;
+  return <ServicePage slug={slug} />;
 }
